@@ -86,7 +86,50 @@ class CreateLink(graphene.Mutation):
         )
 
 
+class UpdateLink(graphene.Mutation):
+    id = graphene.Int()
+    name = graphene.String()
+    description = graphene.String()
+    image = graphene.String()
+    posted_by = graphene.Field(UserType)
+
+    class Arguments:
+        id = graphene.Int(required=True)
+        name = graphene.String()
+        description = graphene.String()
+        image = graphene.String()
+
+    def mutate(self, info, id, name=None, description=None, image=None):
+        user = info.context.user
+        if user.is_anonymous:
+            raise GraphQLError('You must be logged in to update a link!')
+
+        try:
+            link = Link.objects.get(pk=id)
+        except Link.DoesNotExist:
+            raise GraphQLError('Link not found!')
+
+        # Actualizar solo los campos que se proporcionan
+        if name:
+            link.name = name
+        if description:
+            link.description = description
+        if image:
+            link.image = image
+
+        link.save()
+
+        return UpdateLink(
+            id=link.id,
+            name=link.name,
+            description=link.description,
+            image=link.image,
+            posted_by=link.posted_by
+        )
+
+
 #4
 class Mutation(graphene.ObjectType):
     create_link = CreateLink.Field()
     create_vote = CreateVote.Field()
+    update_link = UpdateLink.Field()

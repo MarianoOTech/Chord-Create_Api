@@ -54,10 +54,6 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
 ]
 
-CORS_ALLOWED_ORIGINS = [
-    'http://localhost:3000',
-]
-
 ROOT_URLCONF = 'hackernews.urls'
 
 TEMPLATES = [
@@ -137,3 +133,5 @@ GRAPHENE = {
         'graphql_jwt.middleware.JSONWebTokenMiddleware',
     ],
 }
+
+CORS_ORIGIN_ALLOW_ALL = True
